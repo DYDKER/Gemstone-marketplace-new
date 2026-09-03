@@ -9,6 +9,7 @@ Username = Annotated[str, Field(min_length=1, max_length=240)]
 GemstoneName = Annotated[str, Field(min_length=1, max_length=240)]
 GemstoneDescription = Annotated[str, Field(max_length=320)]
 PositiveInteger = Annotated[int, Field(gt=0)]
+Password = Annotated[str, Field(min_length=8, max_length=128)]
 
 
 class GemstoneType(StrEnum):
@@ -20,6 +21,7 @@ class GemstoneType(StrEnum):
 class UserCreate(BaseModel):
     email: UserEmail
     username: Username
+    password: Password
 
 
 class UserUpdate(BaseModel):
@@ -44,6 +46,16 @@ class UserResponse(BaseModel):
     updated_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class LoginRequest(BaseModel):
+    email: UserEmail
+    password: Password
+
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
 
 
 class GemstoneCreate(BaseModel):

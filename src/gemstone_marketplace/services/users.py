@@ -1,6 +1,6 @@
 from gemstone_marketplace.exceptions import UserNotFoundError
 from gemstone_marketplace.repositories.users import UserRepository
-from gemstone_marketplace.schemas import UserCreate, UserResponse, UserUpdate
+from gemstone_marketplace.schemas import UserResponse, UserUpdate
 
 
 class UserService:
@@ -15,10 +15,6 @@ class UserService:
         user = await self.repository.get_by_id(user_id)
         if user is None:
             raise UserNotFoundError
-        return UserResponse.model_validate(user)
-
-    async def create_user(self, user_data: UserCreate) -> UserResponse:
-        user = await self.repository.create(user_data.model_dump())
         return UserResponse.model_validate(user)
 
     async def update_user(

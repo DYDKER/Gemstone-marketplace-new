@@ -12,3 +12,7 @@ class UserAlreadyExistsError(Exception):
 
 class StoneAlreadyExistsError(Exception):
     pass
+
+
+class InvalidCredentialsError(Exception):
+    pass

@@ -2,6 +2,7 @@ from fastapi import Request
 from fastapi.responses import JSONResponse
 
 from gemstone_marketplace.exceptions import (
+    InvalidCredentialsError,
     StoneAlreadyExistsError,
     StoneNotFoundError,
     UserAlreadyExistsError,
@@ -46,4 +47,15 @@ async def stone_already_exists_handler(
     return JSONResponse(
         status_code=409,
         content={"detail": "Stone with this name already exists"},
+    )
+
+
+async def invalid_credentials_handler(
+    request: Request,
+    exc: InvalidCredentialsError,
+) -> JSONResponse:
+    return JSONResponse(
+        status_code=401,
+        content={"detail": "Could not validate credentials"},
+        headers={"WWW-Authenticate": "Bearer"},
     )

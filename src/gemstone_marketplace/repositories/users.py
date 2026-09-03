@@ -19,6 +19,9 @@ class UserRepository:
     async def get_by_id(self, user_id: int) -> User | None:
         return await self.session.get(User, user_id)
 
+    async def get_by_email(self, email: str) -> User | None:
+        return await self.session.scalar(select(User).where(User.email == email))
+
     async def create(self, data: dict[str, object]) -> User:
         user = User(**data)
         self.session.add(user)
