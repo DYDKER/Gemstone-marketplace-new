@@ -1,13 +1,13 @@
 import asyncio
 from logging.config import fileConfig
 
-from auth_service import models  # noqa: F401
-from auth_service.database import Base, settings
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
+from gemstone_marketplace import models  # noqa: F401
+from gemstone_marketplace.database import Base, settings
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

@@ -1,7 +1,7 @@
 [project]
 name = "gemstone-marketplace-new"
 version = "0.1.0"
-description = "Backend services for the Gemstone Marketplace"
+description = "Backend application for the Gemstone Marketplace"
 readme = "README.md"
 authors = [
     { name = "DYDKER", email = "sultan12345431@gmail.com" }
