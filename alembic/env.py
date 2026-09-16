@@ -1,8 +1,9 @@
 import asyncio
 from logging.config import fileConfig
 
-from auth_service import models  # noqa: F401
-from auth_service.database import Base, settings
+from auth_service import models as auth_models  # noqa: F401
+from database import Base, settings
+from gemstone_service import models as gemstone_models  # noqa: F401
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config

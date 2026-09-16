@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy import Boolean, DateTime, String, func, true
 from sqlalchemy.orm import Mapped, mapped_column
 
-from .database import Base
+from database import Base
 
 
 class User(Base):
@@ -14,3 +14,6 @@ class User(Base):
     username: Mapped[str] = mapped_column(String(240), unique=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default=true())
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now(),
+    )

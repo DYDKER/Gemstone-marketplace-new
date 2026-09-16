@@ -2,10 +2,9 @@ from datetime import datetime
 from enum import StrEnum
 
 from sqlalchemy import Boolean, DateTime, Integer, String, func, true
-from sqlalchemy import Enum as SqlEnum
 from sqlalchemy.orm import Mapped, mapped_column
 
-from .database import Base
+from database import Base
 
 
 class GemstoneType(StrEnum):
@@ -19,7 +18,7 @@ class Gemstone(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(240), unique=True, nullable=False)
-    gemstone_type: Mapped[GemstoneType] = mapped_column(SqlEnum(GemstoneType, name="gemstone_type"), nullable=False)
+    gemstone_type: Mapped[str] = mapped_column(String(50), nullable=False)
     price: Mapped[int] = mapped_column(Integer, nullable=False)
     carat_weight: Mapped[int] = mapped_column(Integer, nullable=False)
     description: Mapped[str | None] = mapped_column(String(320), nullable=True)

@@ -1,0 +1,2 @@
+class StoneNotFoundError(Exception):
+    pass
