@@ -1,16 +1,9 @@
 from datetime import datetime
-from enum import StrEnum
 
 from sqlalchemy import Boolean, DateTime, Integer, String, func, true
 from sqlalchemy.orm import Mapped, mapped_column
 
 from database import Base
-
-
-class GemstoneType(StrEnum):
-    DIAMOND = 'Diamond'
-    RUBY = 'Ruby'
-    SAPPHIRE = 'Sapphire'
 
 
 class Gemstone(Base):

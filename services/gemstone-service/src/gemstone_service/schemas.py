@@ -2,12 +2,12 @@ from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict
 
-from .models import GemstoneType
+from .enum import GemstoneEnum
 
 
 class GemstoneCreate(BaseModel):
     name: str
-    gemstone_type: GemstoneType
+    gemstone_type: GemstoneEnum
     price: int
     carat_weight: int
     description: str | None = None
@@ -16,7 +16,7 @@ class GemstoneCreate(BaseModel):
 
 class GemstoneUpdate(BaseModel):
     name: str | None = None
-    gemstone_type: GemstoneType | None = None
+    gemstone_type: GemstoneEnum | None = None
     price: int | None = None
     carat_weight: int | None = None
     description: str | None = None
@@ -26,7 +26,7 @@ class GemstoneUpdate(BaseModel):
 class GemstoneResponse(BaseModel):
     id: int
     name: str
-    gemstone_type: GemstoneType
+    gemstone_type: GemstoneEnum
     price: int
     carat_weight: int
     description: str | None

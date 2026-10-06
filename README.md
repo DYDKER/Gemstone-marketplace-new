@@ -34,3 +34,13 @@ revisions in both old histories. Then consolidate the version records into
 `alembic_version` and remove the old `gemstone_alembic_version` table in one
 transaction. Resolve any schema differences before marking revisions applied;
 `stamp` only changes version records and does not update the schema.
+
+## Docker startup
+
+Run `docker compose up --build -d` after starting Docker Desktop.
+PostgreSQL starts first, then migrations run, then both APIs start.
+
+- Auth API: http://localhost:8000/docs
+- Gemstone API: http://localhost:8001/docs
+
+View logs with `docker compose logs -f`. Stop containers with `docker compose down`.
