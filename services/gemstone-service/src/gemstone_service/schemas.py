@@ -32,4 +32,9 @@ class GemstoneResponse(BaseModel):
     description: str | None
     is_available: bool
     created_at: datetime
+    image_key: str | None
     model_config = ConfigDict(from_attributes=True)
+
+
+class GemstoneImageResponse(BaseModel):
+    url: str

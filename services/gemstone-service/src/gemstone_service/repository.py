@@ -1,6 +1,8 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.exc import SQLAlchemyError
 
+from .exceptions import ImageSaveRejectedError
 from .models import Gemstone
 
 
@@ -27,10 +29,32 @@ class GemstoneRepository:
         return await self.save(gem)
 
     async def save(self, gem: Gemstone) -> Gemstone:
-        await self.session.commit()
+        try:
+            await self.session.commit()
+        except SQLAlchemyError:
+            await self.session.rollback()
+            raise
+
         await self.session.refresh(gem)
         return gem
 
     async def delete(self, gem: Gemstone) -> None:
         await self.session.delete(gem)
         await self.session.commit()
+
+    async def set_image_key(self, gem: Gemstone, key: str) -> Gemstone:
+        gem.image_key = key
+
+        try:
+            await self.session.flush()
+        except SQLAlchemyError as exc:
+            await self.session.rollback()
+            raise ImageSaveRejectedError() from exc
+
+        try:
+            await self.session.commit()
+        except SQLAlchemyError:
+            await self.session.rollback()
+            raise
+
+        return gem

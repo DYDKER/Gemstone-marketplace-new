@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, File, UploadFile, status
 
 from ..dependencies import get_gemstone_service
-from ..schemas import GemstoneCreate, GemstoneResponse, GemstoneUpdate
+from ..schemas import GemstoneCreate, GemstoneResponse, GemstoneUpdate, GemstoneImageResponse
 from ..service import GemstoneService
 
 router = APIRouter(prefix="/gems", tags=["gems"])
@@ -30,3 +30,15 @@ async def update_gemstone(gemstone_id: int, gemstone_data: GemstoneUpdate, servi
 @router.delete("/{gemstone_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_gemstone(gemstone_id: int, service: GemstoneService = Depends(get_gemstone_service)) -> None:
     await service.delete_gem(gemstone_id)
+
+
+@router.post("/{gemstone_id}/image", response_model=GemstoneResponse)
+async def upload_gemstone_image(gemstone_id: int, file: UploadFile = File(...), service: GemstoneService = Depends(get_gemstone_service)
+) -> GemstoneResponse:
+    return await service.upload_image(gemstone_id, file)
+
+
+@router.get("/{gemstone_id}/image", response_model=GemstoneImageResponse)
+async def read_gemstone_image(gemstone_id: int, service: GemstoneService = Depends(get_gemstone_service)
+) -> GemstoneImageResponse:
+    return await service.get_image_url(gemstone_id)
