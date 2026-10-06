@@ -1,0 +1,74 @@
+x-backend: &backend
+  build: .
+  image: gemstone-backend:local
+  environment:
+    DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/gemstone_auth
+    S3_ENDPOINT_URL: http://rustfs:9000
+    S3_PUBLIC_ENDPOINT_URL: ${S3_PUBLIC_ENDPOINT_URL:-http://localhost:9000}
+    S3_ACCESS_KEY: ${S3_ACCESS_KEY:?Set S3_ACCESS_KEY in .env}
+    S3_SECRET_KEY: ${S3_SECRET_KEY:?Set S3_SECRET_KEY in .env}
+    S3_REGION: ${S3_REGION:-us-east-1}
+    S3_BUCKET: ${S3_BUCKET:-gemstone-images}
+    S3_URL_TTL: ${S3_URL_TTL:-900}
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: gemstone-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: gemstone_auth
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d gemstone_auth"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  rustfs:
+    image: rustfs/rustfs:1.0.0
+    command: ["/data"]
+    restart: unless-stopped
+    environment:
+      RUSTFS_ACCESS_KEY: ${S3_ACCESS_KEY:?Set S3_ACCESS_KEY in .env}
+      RUSTFS_SECRET_KEY: ${S3_SECRET_KEY:?Set S3_SECRET_KEY in .env}
+      RUSTFS_ADDRESS: ":9000"
+      RUSTFS_CONSOLE_ADDRESS: ":9001"
+      RUSTFS_CONSOLE_ENABLE: "true"
+    ports:
+      - "127.0.0.1:9000:9000"
+      - "127.0.0.1:9001:9001"
+    volumes:
+      - rustfs_data:/data
+
+  init:
+    <<: *backend
+    command: ["python", "docker_init.py"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  auth-api:
+    <<: *backend
+    command: ["python", "-m", "uvicorn", "auth_service.main:app", "--app-dir", "services/auth-service/src", "--host", "0.0.0.0", "--port", "8000"]
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      init:
+        condition: service_completed_successfully
+
+  gemstone-api:
+    <<: *backend
+    ports:
+      - "127.0.0.1:8001:8000"
+    depends_on:
+      init:
+        condition: service_completed_successfully
+
+volumes:
+    postgres_data:
+    rustfs_data:
